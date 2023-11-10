@@ -40,12 +40,3 @@ LLM_CACHE = False
 LANGCHAIN_DEBUG = True
 PROJECT_ROOT =  the root of your project
 ```
-## Flow of the project function wise
-get_key --->  tool is used to find the keyword ---> create_get_message ---> find_houses
-
-### steps in tool
-find_keywords ---> match_properties ---> return keyword
-
-Problems faced: 
-The value returned is in a sentence format/None from the Autogen 'find_keywords' method, have to extract the key from it. 
-Tried the same in langchain but gave a similar result
