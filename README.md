@@ -1,6 +1,6 @@
 ## Description
 
-This tool uses autogen to create agents. It accesses a LinkedIn page and gives the summary of the page.
+A tool is created to make an agent. It accesses a Property Selling Website and finds the relevant houses out of the natural language query put up by the user.
 
 ## Installation instructions
 
