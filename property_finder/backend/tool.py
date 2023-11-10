@@ -130,13 +130,13 @@ class HouseFinderTool(BaseTool):
             property_code = '&PropertyTypes=' + property_code
         else:
             property_code =""
-            if location == 'India':
-                url_site = f"https://search.savills.com/in/en/list?SearchList=Id_1243+Category_RegionCountyCountry&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=INR{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&CarSpaces=-1&Receptions=-1&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&Category=GRS_CAT_RES&Shapes=W10"
-            else:
-                url_site = f"https://search.savills.com/list?SearchList=Id_37507+Category_TownVillageCity&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=GBP&{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&SaleableAreaUnit=SquareMeter&Category=GRS_CAT_RES&Shapes=W10&_gl=1*1m1t31h*_ga*MTI5NzIyNjIwNC4xNjk5NTI2ODQ3*_ga_DH58YLS8J6*MTY5OTUyNjg0Ny4xLjEuMTY5OTUyNjg3Mi4wLjAuMA"
-        url_for_houses = requests.get( url_site
-        )
+        if location == 'India':
+            url_site = f"https://search.savills.com/in/en/list?SearchList=Id_1243+Category_RegionCountyCountry&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=INR{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&CarSpaces=-1&Receptions=-1&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&Category=GRS_CAT_RES&Shapes=W10"
+        else:
+            url_site = f"https://search.savills.com/list?SearchList=Id_37507+Category_TownVillageCity&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=GBP&{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&SaleableAreaUnit=SquareMeter&Category=GRS_CAT_RES&Shapes=W10&_gl=1*1m1t31h*_ga*MTI5NzIyNjIwNC4xNjk5NTI2ODQ3*_ga_DH58YLS8J6*MTY5OTUyNjg0Ny4xLjEuMTY5OTUyNjg3Mi4wLjAuMA"
         logger.info(url_site)
+        url_for_houses = requests.get(url_site)
+        
         if url_for_houses.status_code == 200:
             content_html = url_for_houses.content
             with open(cfg.save_html_path / "savills.txt", "wb") as f:
