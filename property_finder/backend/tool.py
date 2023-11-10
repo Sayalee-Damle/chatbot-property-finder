@@ -36,6 +36,15 @@ PROPERTY_TYPES = {
 
 }
 
+INDIA_REGIONS = {
+    "india": "Id_1243",
+    "mumbai": "Id_59763",
+    "chennai": "Id_60692",
+    "goa": "Id_221",
+    "gurgaon": "Id_59768",
+    "delhi": "Id_59768"
+}
+
 MIN_BEDROOMS = {
     0: -1,
     1: "GRS_B_1",

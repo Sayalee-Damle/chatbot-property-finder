@@ -45,6 +45,6 @@ async def start() -> cl.Message:
             await cl.Message(content="Thank You!").send()
             break
             
-        requirements_list = requirements_list + " " + requirements_more['content']
+        requirements_list = requirements_more['content']
         
         

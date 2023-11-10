@@ -47,7 +47,7 @@ class Config:
     if not save_html_path.exists():
         save_html_path.mkdir(exist_ok=True, parents=True)
     
-    project_root = Path(os.getenv("PROJECT_ROOT"))
+    project_root = Path(os.getenv("PROJECT_ROOT"))/'property_finder'
 
 cfg = Config()
 
