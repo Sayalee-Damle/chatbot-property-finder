@@ -33,11 +33,38 @@ def prompt_factory_sentiment() -> ChatPromptTemplate:
     ]
     return ChatPromptTemplate(messages=prompt_msgs)
 
-
 def sentiment_chain_factory() -> LLMChain:
     return create_tagging_chain_pydantic(
         ResponseTags, cfg.llm, prompt_factory_sentiment(), verbose=True
     )
+
+
+def prompt_factory_memory() -> ChatPromptTemplate:
+    section = prompts["memory"]
+    human_message = section["human_message"]
+    prompt_msgs = [
+        SystemMessagePromptTemplate(
+            prompt=PromptTemplate(
+                template=section["system_message"], input_variables=[]
+            )
+        ),
+        HumanMessagePromptTemplate(
+            prompt=PromptTemplate(
+                template=human_message,
+                input_variables = ["memory", "question"]
+            )
+        )
+    ]
+    
+    return ChatPromptTemplate(messages=prompt_msgs)
+
+
+
+def memory_chain_factory(memory, question) -> LLMChain:
+    prompt = prompt_factory_memory()
+    chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=True)
+    return chain.run({"memory": memory, "question": question})
+
 
 
 chain = create_tagging_chain_pydantic(ResponseTags, cfg.llm, prompt_factory_sentiment())

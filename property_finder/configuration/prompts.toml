@@ -2,8 +2,24 @@
 system_message = "You are an expert in terms of understanding the sentiment of a text."
 human_message = """Given this input {text}
 can you tell me whether the overall sentiment of the text indicates some sort of confusion or is it positive or negative?
+
 Example:
 Ya, yes, ok, yep are all positive sentiments
 no, na, ewww, nothing are negative sentiments
 umm is confused
+
+Please indicate if we have gotten the aspired result. The result will have a list of houses.
+if inadequate information is provided please give a confused result.
+"""
+
+[memory]
+system_message = "You are an expert in keeping track of memory"
+human_message = """
+Here are the previous interactions starting with === MEMORY === and ending with === END MEMORY ===:
+=== MEMORY ===
+{memory}
+=== END MEMORY ===
+
+Based on previous interactions please extract relevant attributes for the following question: 
+{question}
 """

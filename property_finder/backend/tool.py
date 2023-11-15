@@ -36,13 +36,15 @@ PROPERTY_TYPES = {
 
 }
 
-INDIA_REGIONS = {
+REGIONS = {
     "india": "Id_1243",
     "mumbai": "Id_59763",
     "chennai": "Id_60692",
     "goa": "Id_221",
     "gurgaon": "Id_59768",
-    "delhi": "Id_59768"
+    "delhi": "Id_59773",
+    "london" : "Id_37507",
+    "uttarakhand": "Id_244"
 }
 
 MIN_BEDROOMS = {
@@ -81,7 +83,7 @@ FEATURES = {
     "spa":"GRS_FTR_SPA",
     "fireplace":"GRS_FTR_FP",
     "garage": "GRS_FTR_GAR",
-    "off=street-parking":"GRS_FTR_OSP",
+    "off-street-parking":"GRS_FTR_OSP",
     "period": "GRS_FTR_PRD",
 }
 
@@ -139,8 +141,9 @@ class HouseFinderTool(BaseTool):
             property_code = '&PropertyTypes=' + property_code
         else:
             property_code =""
-        if location == 'India':
-            url_site = f"https://search.savills.com/in/en/list?SearchList=Id_1243+Category_RegionCountyCountry&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=INR{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&CarSpaces=-1&Receptions=-1&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&Category=GRS_CAT_RES&Shapes=W10"
+        location_code = REGIONS.get(location.lower())
+        if location.lower() != 'london':
+            url_site = f"https://search.savills.com/in/en/list?SearchList={location_code}+Category_RegionCountyCountry&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=INR{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&CarSpaces=-1&Receptions=-1&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&Category=GRS_CAT_RES&Shapes=W10"
         else:
             url_site = f"https://search.savills.com/list?SearchList=Id_37507+Category_TownVillageCity&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=GBP&{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&SaleableAreaUnit=SquareMeter&Category=GRS_CAT_RES&Shapes=W10&_gl=1*1m1t31h*_ga*MTI5NzIyNjIwNC4xNjk5NTI2ODQ3*_ga_DH58YLS8J6*MTY5OTUyNjg0Ny4xLjEuMTY5OTUyNjg3Mi4wLjAuMA"
         logger.info(url_site)
@@ -189,7 +192,7 @@ def generate_llm_config(tool):
 
 
 
-system_message =SystemMessage(content = """
+system_message =SystemMessage(content = f"""
 # Main Purpose
 -You are a polite real estate agent who helps customers to find properties in India and London
 
@@ -198,13 +201,17 @@ system_message =SystemMessage(content = """
 
 # Personality
 - Portray a warm, approachable female property agent 
+                              
+# Memory
+- If you require more information, check the message correctly                         
 
 # Interaction
 - Response to inquiries about properties and building plots but not about other subject. If someone asks about topics unrelated to the real estate market, please tell them that you do not know about it
 - Reply to the queries using markdown dialect
 - Please do not ask follow up questions like eg:Please let me know if you need more information about any of these properties
 - If anyone asks about a property outside of India or London, please reply that you do not deal with these properties
-- If you cannot find the property tell that no property can be found""")
+- If you cannot find the property tell that no property can be found""", 
+)
 
 agent_kwargs = {"system_message": system_message}
 

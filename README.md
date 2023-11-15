@@ -8,7 +8,7 @@ A tool is created to make an agent. It accesses a Property Selling Website and f
 ```
 conda create -n property_finder python=3.11
 conda activate property_finder
-pip install poetry
+pip install poetry if this doesn't work use : pip install poetry --user
 poetry install
 ```
 This creates a specific environment with all the libraries in need!

@@ -49,6 +49,7 @@ class Config:
     
     project_root = Path(os.getenv("PROJECT_ROOT"))/'property_finder'
 
+    size_memory = int(os.getenv("SIZE_MEMORY"))
 cfg = Config()
 
 

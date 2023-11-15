@@ -5,6 +5,7 @@ from property_finder.configuration.config import cfg
 from property_finder.backend.tool import agent
 import property_finder.backend.tagging_service as ts
 from property_finder.backend.model import ResponseTags
+from property_finder.backend.memory import memory
 
 
 def answer(input_msg: str):
@@ -21,6 +22,15 @@ def answer(input_msg: str):
     else:
         return "did not understand"
 
+
+async def memory_save(requirements_list: str, question: str):
+    logger.info("in memory")
+    memory.memory_list.append(requirements_list)
+    if len(memory.memory_list) == cfg.size_memory:
+        memory.memory_list.pop(0)
+    memory_string = ''.join(memory.memory_list)
+    return ts.memory_chain_factory(memory_string, question)
+
 async def ask_user_msg(question):
     ans = None
     while ans == None:
@@ -32,19 +42,36 @@ async def ask_user_msg(question):
 @cl.on_chat_start
 async def start() -> cl.Message:
     await cl.Message(content="Welcome To The Property Finder, You can find properties in London and India").send()
-    await cl.Message(content="You need to specify \"London\" if you want a house there").send()
-    requirements = await ask_user_msg("What are the requirements for your house?")
-    requirements_list = requirements['content']
-    while True:
-        #logger.info(requirements['content'])
-        list_of_houses = await cl.make_async(agent.run)(requirements_list)
-        await cl.Message(content=list_of_houses).send()
 
-        requirements_more = await ask_user_msg("What else can you describe?")
-        if answer(requirements_more['content']) == "negative":
-            await cl.Message(content="Thank You!").send()
-            break
+    initial_ques = "What are the requirements for your house?"
+    while True:
+        requirements = await ask_user_msg(initial_ques)
+        requirements_list = requirements['content']
+        val = await memory_save(requirements_list, initial_ques)
+        
             
-        requirements_list = requirements_more['content']
+        content_requirements = requirements_list + " " + val
+        list_of_houses = await cl.make_async(agent.run)(content_requirements)
+        type_answer = await answer(list_of_houses)
+        await cl.Message(content=list_of_houses).send()
+        if type_answer == 'confused':
+            while True:
+                ques = "What else can you describe?"
+                requirements = await ask_user_msg(ques)
+                val = await memory_save(requirements_list, ques)
+
+                if answer(requirements['content']) == "negative":
+                    await cl.Message(content="Thank You!").send()
+                    break
+                
+        elif type_answer == 'positive':
+            initial_ques = "Can I search different properties for youo?"
+            continue
+            
+        requirements_list = requirements['content']
+        
+
+if __name__ == "__main__":
+    logger.info(memory.memory_list)
         
         
