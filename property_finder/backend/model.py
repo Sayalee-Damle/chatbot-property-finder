@@ -18,3 +18,11 @@ class ResponseTags(BaseModel):
         ...,
         description="Whether the text with the answers contains a negative tone to it.",
     )
+    is_correct_output: bool = Field(
+        ...,
+        description="Whether the text with the answers contains a list of houses in it.",
+    )
+    is_waste: bool = Field(
+        ...,
+        description="Whether the text with the answers contains unrelated questions in it.",
+    )

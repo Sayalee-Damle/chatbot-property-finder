@@ -15,8 +15,9 @@ from property_finder.configuration.toml_support import read_prompts_toml
 prompts = read_prompts_toml()
 
 
+
 def prompt_factory_sentiment() -> ChatPromptTemplate:
-    section = prompts["tagging"]
+    section = prompts["tagging_sentiment"]
     human_message = section["human_message"]
     prompt_msgs = [
         SystemMessagePromptTemplate(
@@ -38,6 +39,38 @@ def sentiment_chain_factory() -> LLMChain:
         ResponseTags, cfg.llm, prompt_factory_sentiment(), verbose=True
     )
 
+###
+def prompt_factory_houses() -> ChatPromptTemplate:
+    section = prompts["tagging_finding_houses"]
+    human_message = section["human_message"]
+    prompt_msgs = [
+        SystemMessagePromptTemplate(
+            prompt=PromptTemplate(
+                template=section["system_message"], input_variables=[]
+            )
+        ),
+        HumanMessagePromptTemplate(
+            prompt=PromptTemplate(
+                template=human_message,
+                input_variables=["text"],
+            )
+        ),
+    ]
+    return ChatPromptTemplate(messages=prompt_msgs)
+
+def houses_chain_factory() -> LLMChain:
+    return create_tagging_chain_pydantic(
+        ResponseTags, cfg.llm, prompt_factory_houses(), verbose=True
+    )
+
+def prepare_finding_houses_input(text: str) -> dict:
+    return {"text": text}
+
+chain_text = create_tagging_chain_pydantic(ResponseTags, cfg.llm, prompt_factory_houses())
+
+def tag_response(response: str):
+    res = chain_text(prepare_finding_houses_input(response))
+    return res
 
 def prompt_factory_memory() -> ChatPromptTemplate:
     section = prompts["memory"]

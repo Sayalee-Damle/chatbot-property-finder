@@ -1,16 +1,39 @@
-[tagging]
-system_message = "You are an expert in terms of understanding the sentiment of a text."
-human_message = """Given this input {text}
-can you tell me whether the overall sentiment of the text indicates some sort of confusion or is it positive or negative?
 
-Example:
-Ya, yes, ok, yep are all positive sentiments
-no, na, ewww, nothing are negative sentiments
-umm is confused
+[tagging_sentiment]
+    system_message = "You are an expert in terms of understanding the sentiment of a text."
+    human_message = """Given this input {text}
+    can you tell me whether the overall sentiment of the text indicates some sort of confusion or is it positive or negative ?
 
-Please indicate if we have gotten the aspired result. The result will have a list of houses.
-if inadequate information is provided please give a confused result.
-"""
+    Example:
+    Ya, yes, ok, yep are all positive sentiments
+    no, na, ewww, nothing are negative sentiments
+    umm is confused
+    """
+[tagging_finding_houses]
+    system_message = "You are an expert in terms of understanding the content of the text."
+    human_message = """Given this input {text},
+    classify it into : correct, confusing, waste
+    Please indicate if we have gotten the aspired result. 
+    The result will have a list of houses. If yes, give a correct output indication.
+    The output must include:
+    '- **Property Name**: For Sale 3-bhk Sea-facing apartment\n
+    - **Property Details**: This flat includes 1 living room, gymnasium, power backup, and 24×7 security.\n
+    - **Property Size**: 1,800 sq ft (167.23 sq m)\n
+    - **Property Address**: Nepean sea Road, Malabar Hill, Mumbai\n
+    - **Realtor Name**: Priyanka Basu\n
+    - **Property Link**: [View Property](https://search.savills.com//in/en/property-detail/in3102054352)'
+
+    If inadequate information is provided please give a confused result. This result will not contain a list of houses. 
+    The message asks the user for more information for finding houses. Please understand this type very specifically and give a confused output.
+    This means that more information is needed to narrow down on properties. It is neither positive nor negative.
+    It may look like this:
+    'I'd be delighted to assist you in finding a flat. To provide you with the best options, could you please specify the location you're interested in, either in India or London? 
+    Additionally, it would be helpful to know your preferences regarding the number of bedrooms and bathrooms, as well as any particular features you desire in a flat.'
+
+
+    If an out of box question is given, then mark it as unrelated.
+    the question might look like: 'what is the capital of senegal'
+    """
 
 [memory]
 system_message = "You are an expert in keeping track of memory"

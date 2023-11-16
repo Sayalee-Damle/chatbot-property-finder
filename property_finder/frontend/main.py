@@ -8,7 +8,7 @@ from property_finder.backend.model import ResponseTags
 from property_finder.backend.memory import memory
 
 
-def answer(input_msg: str):
+async def answer(input_msg: str):
     response_tags: ResponseTags = ts.sentiment_chain_factory().run(
         ts.prepare_sentiment_input(input_msg)
     )
@@ -20,8 +20,21 @@ def answer(input_msg: str):
     elif response_tags.sounds_confused:
         return "confused"
     else:
-        return "did not understand"
+        return "I can't understand"
 
+async def correct_output_finder(input_msg: str):
+    response_tags: ResponseTags = ts.houses_chain_factory().run(
+        ts.prepare_finding_houses_input(input_msg)
+    )
+    logger.info(response_tags)
+    if response_tags.is_correct_output:
+        return "correct"
+    elif response_tags.is_waste:
+        return "doesn't relate"
+    elif response_tags.sounds_confused:
+        return "confused"
+    else:
+        return "I can't understand"
 
 async def memory_save(requirements_list: str, question: str):
     logger.info("in memory")
@@ -47,28 +60,34 @@ async def start() -> cl.Message:
     while True:
         requirements = await ask_user_msg(initial_ques)
         requirements_list = requirements['content']
-        val = await memory_save(requirements_list, initial_ques)
-        
-            
-        content_requirements = requirements_list + " " + val
-        list_of_houses = await cl.make_async(agent.run)(content_requirements)
-        type_answer = await answer(list_of_houses)
-        await cl.Message(content=list_of_houses).send()
-        if type_answer == 'confused':
-            while True:
-                ques = "What else can you describe?"
-                requirements = await ask_user_msg(ques)
-                val = await memory_save(requirements_list, ques)
 
-                if answer(requirements['content']) == "negative":
-                    await cl.Message(content="Thank You!").send()
-                    break
+
+        val = await memory_save(requirements_list, initial_ques)
+        list_of_houses = await get_list_houses(requirements_list, val)
+        type_answer = await correct_output_finder(list_of_houses)
+        logger.info(type_answer)
+        if type_answer == 'confused':
+            initial_ques = "What else can you describe?"
+            requirements = await ask_user_msg(initial_ques)
+            val = await memory_save(requirements['content'], initial_ques)
+            #list_of_houses = await get_list_houses(requirements_list, val)
+
+        
                 
-        elif type_answer == 'positive':
-            initial_ques = "Can I search different properties for youo?"
+        elif type_answer == 'correct':
+            initial_ques = "We can find more properties with different specifications, please enter the specifications"
             continue
-            
-        requirements_list = requirements['content']
+        
+        else:
+            initial_ques = "Can you please tell me the requirements for your house so that I can find one for you?"
+            continue
+        #requirements_list = requirements['content']
+
+async def get_list_houses(requirements_list, val):
+    content_requirements = requirements_list + " " + val
+    list_of_houses = await cl.make_async(agent.run)(content_requirements)
+    await cl.Message(content=list_of_houses).send()
+    return list_of_houses
         
 
 if __name__ == "__main__":
