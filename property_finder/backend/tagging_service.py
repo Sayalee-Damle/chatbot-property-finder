@@ -15,7 +15,6 @@ from property_finder.configuration.toml_support import read_prompts_toml
 prompts = read_prompts_toml()
 
 
-
 def prompt_factory_sentiment() -> ChatPromptTemplate:
     section = prompts["tagging_sentiment"]
     human_message = section["human_message"]
@@ -34,10 +33,12 @@ def prompt_factory_sentiment() -> ChatPromptTemplate:
     ]
     return ChatPromptTemplate(messages=prompt_msgs)
 
+
 def sentiment_chain_factory() -> LLMChain:
     return create_tagging_chain_pydantic(
         ResponseTags, cfg.llm, prompt_factory_sentiment(), verbose=True
     )
+
 
 ###
 def prompt_factory_houses() -> ChatPromptTemplate:
@@ -58,19 +59,26 @@ def prompt_factory_houses() -> ChatPromptTemplate:
     ]
     return ChatPromptTemplate(messages=prompt_msgs)
 
+
 def houses_chain_factory() -> LLMChain:
     return create_tagging_chain_pydantic(
         ResponseTags, cfg.llm, prompt_factory_houses(), verbose=True
     )
 
+
 def prepare_finding_houses_input(text: str) -> dict:
     return {"text": text}
 
-chain_text = create_tagging_chain_pydantic(ResponseTags, cfg.llm, prompt_factory_houses())
+
+chain_text = create_tagging_chain_pydantic(
+    ResponseTags, cfg.llm, prompt_factory_houses()
+)
+
 
 def tag_response(response: str):
     res = chain_text(prepare_finding_houses_input(response))
     return res
+
 
 def prompt_factory_memory() -> ChatPromptTemplate:
     section = prompts["memory"]
@@ -83,21 +91,18 @@ def prompt_factory_memory() -> ChatPromptTemplate:
         ),
         HumanMessagePromptTemplate(
             prompt=PromptTemplate(
-                template=human_message,
-                input_variables = ["memory", "question"]
+                template=human_message, input_variables=["memory", "question"]
             )
-        )
+        ),
     ]
-    
-    return ChatPromptTemplate(messages=prompt_msgs)
 
+    return ChatPromptTemplate(messages=prompt_msgs)
 
 
 def memory_chain_factory(memory, question) -> LLMChain:
     prompt = prompt_factory_memory()
     chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=True)
     return chain.run({"memory": memory, "question": question})
-
 
 
 chain = create_tagging_chain_pydantic(ResponseTags, cfg.llm, prompt_factory_sentiment())

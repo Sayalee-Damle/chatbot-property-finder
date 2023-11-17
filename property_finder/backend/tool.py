@@ -8,7 +8,6 @@ import requests
 from langchain.agents import AgentType, initialize_agent
 
 
-
 import property_finder.langchain_agent.extract_properties as ep
 from property_finder.configuration.log_factory import logger
 from property_finder.configuration.config import cfg
@@ -33,7 +32,6 @@ PROPERTY_TYPES = {
     "studio": "GRS_PT_STU",
     "triplex": "GRS_PT_T",
     "building plot": "GRS_PT_BP",
-
 }
 
 REGIONS = {
@@ -43,8 +41,8 @@ REGIONS = {
     "goa": "Id_221",
     "gurgaon": "Id_59768",
     "delhi": "Id_59773",
-    "london" : "Id_37507",
-    "uttarakhand": "Id_244"
+    "london": "Id_37507",
+    "uttarakhand": "Id_244",
 }
 
 MIN_BEDROOMS = {
@@ -58,7 +56,7 @@ MIN_BEDROOMS = {
 }
 
 MIN_BATHROOMS = {
-    0:-1,
+    0: -1,
     1: "GRS_BT_1",
     2: "GRS_BT_2",
     3: "GRS_BT_3",
@@ -68,29 +66,30 @@ MIN_BATHROOMS = {
 }
 
 FEATURES = {
-    "balcony":"GRS_FTR_B" ,
-    "children's facility":"GRS_FTR_CHF",
-    "club facilities": "GRS_FTR_CF" ,
-    "concierge": "GRS_FTR_CON" ,
-    "garden":"GRS_FTR_GDN",
-    "gym": "GRS_FTR_G" ,
-    "staff accomodation":"GRS_FTR_HLPQ",
+    "balcony": "GRS_FTR_B",
+    "children's facility": "GRS_FTR_CHF",
+    "club facilities": "GRS_FTR_CF",
+    "concierge": "GRS_FTR_CON",
+    "garden": "GRS_FTR_GDN",
+    "gym": "GRS_FTR_G",
+    "staff accomodation": "GRS_FTR_HLPQ",
     "jacuzzi": "GRS_FTR_JKZI",
-    "lift":"GRS_FTR_L",
-    "roof terrace":"GRS_FTR_RT",
-    "swimming pool":"GRS_FTR_SP",
-    "tennis court":"GRS_FTR_TC",
-    "spa":"GRS_FTR_SPA",
-    "fireplace":"GRS_FTR_FP",
+    "lift": "GRS_FTR_L",
+    "roof terrace": "GRS_FTR_RT",
+    "swimming pool": "GRS_FTR_SP",
+    "tennis court": "GRS_FTR_TC",
+    "spa": "GRS_FTR_SPA",
+    "fireplace": "GRS_FTR_FP",
     "garage": "GRS_FTR_GAR",
-    "off-street-parking":"GRS_FTR_OSP",
+    "off-street-parking": "GRS_FTR_OSP",
     "period": "GRS_FTR_PRD",
 }
 
 ## GRS_BT_4
 ##features: Union[str, None] = Field(
- ##       ..., description="The name of the index for which the data is to be retrieved"
-    ##)
+##       ..., description="The name of the index for which the data is to be retrieved"
+##)
+
 
 class HouseFinderToolInput(BaseModel):
     location: Union[str, None] = Field(
@@ -108,7 +107,7 @@ class HouseFinderToolInput(BaseModel):
     )
 
     features: Union[list, None] = Field(
-      ..., description="Extract features in the property"
+        ..., description="Extract features in the property"
     )
 
 
@@ -118,9 +117,14 @@ class HouseFinderTool(BaseTool):
     args_schema: Type[BaseModel] = HouseFinderToolInput
 
     def _run(
-        self,type_of_property: Union[str, None], features: Union[list, None], no_of_bedrooms: Union[int, None] = -1, no_of_bathrooms: Union[int, None] = -1, location: Union[str, None] = 'India'
+        self,
+        type_of_property: Union[str, None],
+        features: Union[list, None],
+        no_of_bedrooms: Union[int, None] = -1,
+        no_of_bathrooms: Union[int, None] = -1,
+        location: Union[str, None] = "India",
     ):
-        property_code =  PROPERTY_TYPES.get(type_of_property.lower())
+        property_code = PROPERTY_TYPES.get(type_of_property.lower())
         if no_of_bedrooms != -1:
             bedroom_code = MIN_BEDROOMS.get(no_of_bedrooms)
         if no_of_bathrooms != -1:
@@ -132,23 +136,25 @@ class HouseFinderTool(BaseTool):
                     feature_code: str = feature_code + FEATURES.get(feature.lower())
             else:
                 for feature in features:
-                    feature_code: str = feature_code + ',' + FEATURES.get(feature.lower())
+                    feature_code: str = (
+                        feature_code + "," + FEATURES.get(feature.lower())
+                    )
         else:
             feature_code = ""
         logger.info(property_code)
         logger.info(feature_code)
         if property_code != None:
-            property_code = '&PropertyTypes=' + property_code
+            property_code = "&PropertyTypes=" + property_code
         else:
-            property_code =""
+            property_code = ""
         location_code = REGIONS.get(location.lower())
-        if location.lower() != 'london':
+        if location.lower() != "london":
             url_site = f"https://search.savills.com/in/en/list?SearchList={location_code}+Category_RegionCountyCountry&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=INR{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&CarSpaces=-1&Receptions=-1&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&Category=GRS_CAT_RES&Shapes=W10"
         else:
             url_site = f"https://search.savills.com/list?SearchList=Id_37507+Category_TownVillageCity&Tenure=GRS_T_B&SortOrder=SO_PCDD&Currency=GBP&{property_code}&Bedrooms={bedroom_code}&Bathrooms={bathroom_code}{feature_code}&ResidentialSizeUnit=SquareFeet&LandAreaUnit=Acre&SaleableAreaUnit=SquareMeter&Category=GRS_CAT_RES&Shapes=W10&_gl=1*1m1t31h*_ga*MTI5NzIyNjIwNC4xNjk5NTI2ODQ3*_ga_DH58YLS8J6*MTY5OTUyNjg0Ny4xLjEuMTY5OTUyNjg3Mi4wLjAuMA"
         logger.info(url_site)
         url_for_houses = requests.get(url_site)
-        
+
         if url_for_houses.status_code == 200:
             content_html = url_for_houses.content
             with open(cfg.save_html_path / "savills.txt", "wb") as f:
@@ -190,9 +196,8 @@ def generate_llm_config(tool):
     return function_schema
 
 
-
-
-system_message =SystemMessage(content = f"""
+system_message = SystemMessage(
+    content=f"""
 # Main Purpose
 -You are a polite real estate agent who helps customers to find properties in India and London
 
@@ -210,24 +215,29 @@ system_message =SystemMessage(content = f"""
 - Reply to the queries using markdown dialect
 - Please do not ask follow up questions like eg:Please let me know if you need more information about any of these properties
 - If anyone asks about a property outside of India or London, please reply that you do not deal with these properties
-- If you cannot find the property tell that no property can be found""", 
+- If you cannot find the property tell that no property can be found""",
 )
 
 agent_kwargs = {"system_message": system_message}
 
 house_finder_tool = HouseFinderTool()
 agent = initialize_agent(
-    [HouseFinderTool()], cfg.llm,
-    agent=AgentType.OPENAI_FUNCTIONS, verbose=True, agent_kwargs=agent_kwargs
+    [HouseFinderTool()],
+    cfg.llm,
+    agent=AgentType.OPENAI_FUNCTIONS,
+    verbose=True,
+    agent_kwargs=agent_kwargs,
 )
 
 if __name__ == "__main__":
     import webbrowser
 
-    list_of_properties = agent.run("I want to buy a bangalow of 4 bedrooms with a lift and a balcony")
-    #logger.info(list_of_properties)
+    list_of_properties = agent.run(
+        "I want to buy a bangalow of 4 bedrooms with a lift and a balcony"
+    )
+    # logger.info(list_of_properties)
     # content = html.content
     # with open("/tmp/savills.txt", "wb") as f:
     # f.write(content)
 
-    #webbrowser.open(url)
+    # webbrowser.open(url)

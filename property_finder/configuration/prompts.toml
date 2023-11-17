@@ -14,7 +14,7 @@
     human_message = """Given this input {text},
     classify it into : correct, confusing, waste
     Please indicate if we have gotten the aspired result. 
-    The result will have a list of houses. If yes, give a correct output indication.
+    The result will have a list of houses. If yes, give a CORRECT output indication.
     The output must include:
     '- **Property Name**: For Sale 3-bhk Sea-facing apartment\n
     - **Property Details**: This flat includes 1 living room, gymnasium, power backup, and 24×7 security.\n
@@ -23,7 +23,7 @@
     - **Realtor Name**: Priyanka Basu\n
     - **Property Link**: [View Property](https://search.savills.com//in/en/property-detail/in3102054352)'
 
-    If inadequate information is provided please give a confused result. This result will not contain a list of houses. 
+    If inadequate information is provided please give a CONFUSED result. The result will not contain a list of houses. 
     The message asks the user for more information for finding houses. Please understand this type very specifically and give a confused output.
     This means that more information is needed to narrow down on properties. It is neither positive nor negative.
     It may look like this:
@@ -31,7 +31,7 @@
     Additionally, it would be helpful to know your preferences regarding the number of bedrooms and bathrooms, as well as any particular features you desire in a flat.'
 
 
-    If an out of box question is given, then mark it as unrelated.
+    If an out of box question is given, then mark it as UNRELATED.
     the question might look like: 'what is the capital of senegal'
     """
 

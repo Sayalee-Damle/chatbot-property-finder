@@ -38,6 +38,6 @@ CODE_DIR = /tmp/property_finder
 SAVE_HTML = /tmp/property_finder/html_savills
 LLM_CACHE = False
 LANGCHAIN_DEBUG = True
-PROJECT_ROOT =  the root of your project / property_finder
+PROJECT_ROOT =  the root of your project
 SIZE_MEMORY = 5
 ```
