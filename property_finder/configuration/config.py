@@ -23,12 +23,7 @@ class Config:
             "api_key": openai.api_key,
         }
     ]
-    llm_config = {
-        "request_timeout": int(os.getenv("REQUEST_TIMEOUT")),
-        "seed": int(os.getenv("SEED")),
-        "config_list": config_list,
-        "temperature": int(os.getenv("TEMPERATURE")),
-    }
+  
     max_consecutive_auto_reply = int(os.getenv("MAX_AUTO_REPLY"))
     code_dir = os.getenv("CODE_DIR")
     llm = ChatOpenAI(
