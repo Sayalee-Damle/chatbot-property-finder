@@ -43,7 +43,7 @@ async def memory_save(requirements_list: str, question: str):
     memory.memory_list.append(requirements_list)
     if len(memory.memory_list) == cfg.size_memory:
         memory.memory_list.pop(0)
-    memory_string = "".join(memory.memory_list)
+    memory_string = " ".join(memory.memory_list)
     return ts.memory_chain_factory(memory_string, question)
 
 
