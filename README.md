@@ -1,6 +1,6 @@
 ## Description
 
-A tool is created to make an agent. It accesses a Property Selling Website and finds the relevant houses out of the natural language query put up by the user.
+This is a chatbot which allows users to search for properties using natural language. This chatbot is based on Langchain Agents and uses the property search engine of Savills (https://www.savills.com/)
 
 ## Installation instructions
 
