@@ -15,16 +15,6 @@ class Config:
     llm_cache = os.getenv("LLM_CACHE") == "True"
     openai.api_key = os.getenv("OPENAI_API_KEY")
     assert openai.api_key is not None, "Open AI key not found"
-    terminate_token = os.getenv("TERMINATE_TOKEN")
-
-    config_list = [
-        {
-            "model": model_name,
-            "api_key": openai.api_key,
-        }
-    ]
-  
-    max_consecutive_auto_reply = int(os.getenv("MAX_AUTO_REPLY"))
     code_dir = os.getenv("CODE_DIR")
     llm = ChatOpenAI(
         openai_api_key=os.getenv("OPENAI_API_KEY"),
@@ -52,5 +42,4 @@ cfg = Config()
 if __name__ == "__main__":
     # print("key: ", cfg.openai_api_key)
     print("model: ", cfg.model_name)
-    print("configlist: ", cfg.config_list)
     print("langchain-debug: ", langchain.debug)
