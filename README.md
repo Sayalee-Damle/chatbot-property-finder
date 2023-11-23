@@ -1,6 +1,6 @@
 ## Description
 
-This is a chatbot which allows users to search for properties using natural language. This chatbot is based on Langchain Agents and uses the property search engine of Savills (https://www.savills.com/)
+This is a chatbot which allows users to search for properties using natural language. This chatbot is based on Langchain Agents and uses the Savills property search engine (https://www.savills.com/).
 
 ## Installation instructions
 
